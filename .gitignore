@@ -1,0 +1,43 @@
+## Visual Studio / .NET Framework
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache / options
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# ReSharper / Rider
+_ReSharper*/
+*.DotSettings.user
+.idea/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+!packages/build/
+
+# Test / coverage output
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.[Cc]ache
+!*.[Cc]ache/
+
+# Publish output
+[Pp]ublish/
+*.publishsettings
+
+# Misc
+*.tmp
+*.log
+*.bak
+Thumbs.db
+desktop.ini
