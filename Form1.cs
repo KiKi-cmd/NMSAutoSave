@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 
 
@@ -160,13 +159,6 @@ namespace NMSAutoSave
                     return;
                 }
 
-                // 等待写入稳定，避免复制到游戏正写到一半的压缩包
-                if (!WaitStable(targets))
-                {
-                    WriteLog("存档文件仍在写入（等待超时），跳过本次备份");
-                    return;
-                }
-
                 // 内容没有变化就不必再存一份完全相同的副本
                 string fingerprint = Fingerprint(targets);
                 if (fingerprint == _lastFingerprint)
@@ -222,49 +214,6 @@ namespace NMSAutoSave
             {
                 WriteLog("备份过程异常：" + ex);
             }
-        }
-
-        /// <summary>
-        /// 等待一批文件写入稳定：连续两次采样的大小与修改时间完全一致才算写完。
-        /// 超时仍不稳定则返回 false，本次放弃备份。
-        /// </summary>
-        private static bool WaitStable(FileInfo[] files, int timeoutMs = 8000)
-        {
-            string baseline = Snapshot(files);
-            Stopwatch sw = Stopwatch.StartNew();
-            while (sw.ElapsedMilliseconds < timeoutMs)
-            {
-                Thread.Sleep(400);
-                foreach (FileInfo f in files)
-                {
-                    f.Refresh();
-                }
-                string current = Snapshot(files);
-                if (current == baseline)
-                {
-                    return true;
-                }
-                baseline = current;
-            }
-            return false;
-        }
-
-        private static string Snapshot(FileInfo[] files)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (FileInfo f in files)
-            {
-                if (f.Exists)
-                {
-                    sb.Append(f.Length).Append('@').Append(f.LastWriteTimeUtc.Ticks);
-                }
-                else
-                {
-                    sb.Append("-@-");
-                }
-                sb.Append(';');
-            }
-            return sb.ToString();
         }
 
         /// <summary>
